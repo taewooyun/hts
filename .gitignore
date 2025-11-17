@@ -1,0 +1,76 @@
+# ======================================
+# ⚙️ CMake 빌드 관련
+# ======================================
+
+# CMake 빌드 디렉토리 (Out-of-source 빌드 권장)
+build/
+build-*/
+
+# CMake 생성 파일
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+CTestTestfile.cmake
+Makefile
+install_manifest.txt
+compile_commands.json
+
+# ======================================
+# 🧱 Qt 자동 생성 파일
+# ======================================
+
+# MOC / UIC / RCC에서 자동 생성되는 임시 파일
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# Qt Creator 관련 설정 파일 (개인 개발 환경)
+*.pro.user
+*.qbs.user
+*.qmlproject.user
+*.creator.user
+*.creator.user.*
+*.user.*
+*.user
+*.autosave
+CMakeLists.txt.user
+
+# Qt / CMake 빌드 중간 결과
+*.obj
+*.o
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+
+# ======================================
+# 🪶 IDE 및 시스템 관련
+# ======================================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# VSCode
+.vscode/
+.history/
+
+# ======================================
+# 🧩 기타
+# ======================================
+
+# 로그 / 캐시 / 백업 파일
+*.log
+*.cache
+*.bak
+*.tmp
+
+# 개인 파일
+day_templete/
+playground/
+til_images/

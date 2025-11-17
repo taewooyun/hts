@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ROOT_H
 #define ROOT_H
 

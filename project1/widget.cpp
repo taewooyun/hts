@@ -1,9 +1,5 @@
 #include "widget.h"
 #include "ui_widget.h"
-#include <QStyleOptionTab>
-#include <QStylePainter>
-#include <QTabBar>
-#include <QTabWidget>
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)

@@ -12,12 +12,15 @@ public:
     QSize tabSizeHint(int index) const{
         QSize s = QTabBar::tabSizeHint(index);
         s.transpose();
+        s.rheight() += 100;
+        s.rwidth() += 100;
         return s;
     }
 protected:
     void paintEvent(QPaintEvent * /*event*/){
         QStylePainter painter(this);
         QStyleOptionTab opt;
+
 
         for(int i = 0;i < count();i++)
         {
@@ -46,6 +49,7 @@ class TabWidget : public QTabWidget
 public:
     TabWidget(QWidget *parent=0):QTabWidget(parent){
         setTabBar(new TabBar);
+
         setTabPosition(QTabWidget::West);
     }
 };

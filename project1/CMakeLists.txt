@@ -3,8 +3,8 @@ project(project1 LANGUAGES CXX)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Sql)
-
-
+find_package(Qt6 REQUIRED COMPONENTS Charts)
+find_package(Qt6 REQUIRED COMPONENTS Network)
 
 qt_standard_project_setup()
 
@@ -25,6 +25,10 @@ qt_add_executable(project1
     source/signup/signup.cpp
     source/signup/signup.h
     source/signup/signup.ui
+    source/chart/chart.cpp
+    source/chart/chart.h
+    source/chart/chart.ui
+    source/chart/chart_model.h
     resource.qrc
 )
 
@@ -34,6 +38,8 @@ target_link_libraries(project1
         Qt::Widgets
         Qt::Sql
 )
+target_link_libraries(project1 PRIVATE Qt6::Charts)
+target_link_libraries(project1 PRIVATE Qt6::Network)
 
 include(GNUInstallDirs)
 

@@ -3,9 +3,7 @@
 #include <QSqlQuery>
 
 #include "root.h"
-#include "source/home/home.h"
-#include "source/login/login.h"
-#include "source/signup/signup.h"
+#include "source/chart/chart.h"
 
 int main(int argc, char *argv[])
 {
@@ -35,9 +33,9 @@ int main(int argc, char *argv[])
 
     Home *homePage = new Home(loginPage, signupPage);  // 🔥 전달됨
 
-    mainWindow->addTab(homePage, "Home");
-    mainWindow->addTab(new QWidget, "tab2");
-    mainWindow->addTab(new QWidget, "tab3");
+    mainWindow.addTab(new homePage, "Home");
+    mainWindow.addTab(new Chart(), "Chart");
+    wmainWindow.addTab(new QWidget, "DashBoard");
 
     mainWindow->show();
     return a.exec();

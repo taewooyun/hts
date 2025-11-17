@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.19)
 project(project1 LANGUAGES CXX)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Charts)
+find_package(Qt6 REQUIRED COMPONENTS Network)
 
 qt_standard_project_setup()
 
@@ -13,6 +15,10 @@ qt_add_executable(project1
     widget.ui
     root.cpp
     root.h
+    source/chart/chart.cpp
+    source/chart/chart.h
+    source/chart/chart.ui
+    source/chart/chart_model.h
 )
 
 target_link_libraries(project1
@@ -20,6 +26,8 @@ target_link_libraries(project1
         Qt::Core
         Qt::Widgets
 )
+target_link_libraries(project1 PRIVATE Qt6::Charts)
+target_link_libraries(project1 PRIVATE Qt6::Network)
 
 include(GNUInstallDirs)
 

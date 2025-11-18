@@ -4,6 +4,8 @@
 
 #include "root.h"
 #include "source/chart/chart.h"
+#include "source/home/home.h"
+#include "source/login/login.h"
 
 int main(int argc, char *argv[])
 {
@@ -33,9 +35,9 @@ int main(int argc, char *argv[])
 
     Home *homePage = new Home(loginPage, signupPage);  // 🔥 전달됨
 
-    mainWindow.addTab(new homePage, "Home");
-    mainWindow.addTab(new Chart(), "Chart");
-    wmainWindow.addTab(new QWidget, "DashBoard");
+    mainWindow->addTab(homePage, "Home");
+    mainWindow->addTab(new Chart(), "Chart");
+    mainWindow->addTab(new QWidget, "DashBoard");
 
     mainWindow->show();
     return a.exec();

@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.19)
 project(project1 LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Sql)
-find_package(Qt6 REQUIRED COMPONENTS Charts)
-find_package(Qt6 REQUIRED COMPONENTS Network)
-
+find_package(Qt6 6.5 REQUIRED COMPONENTS
+    Core
+    Widgets
+    Sql
+    Charts
+    Network
+)
 qt_standard_project_setup()
 
 qt_add_executable(project1
@@ -38,8 +40,15 @@ target_link_libraries(project1
         Qt::Widgets
         Qt::Sql
 )
-target_link_libraries(project1 PRIVATE Qt6::Charts)
-target_link_libraries(project1 PRIVATE Qt6::Network)
+
+target_link_libraries(project1
+    PRIVATE
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Sql
+        Qt6::Charts
+        Qt6::Network
+)
 
 include(GNUInstallDirs)
 

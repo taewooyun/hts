@@ -16,14 +16,18 @@ class Chart : public QWidget
     Q_OBJECT
 
 public:
-    Chart(QWidget *parent = nullptr);
+    Chart(QWidget *parent = nullptr, QString = "한화비전");
     ~Chart();
+
+public slots:
+private slots:
+    void on_button_trade_clicked(const QList<StockItem> &list);
+
 
 private:
     Ui::Chart *ui;
 
     QChartView* createPriceChart(int cnt, QList<StockItem> items);
-    QChartView *createVolumeChart(int cnt, QList<StockItem> items);
 };
 
 

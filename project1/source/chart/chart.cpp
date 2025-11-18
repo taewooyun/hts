@@ -1,6 +1,7 @@
 #include "chart_model.h"
 #include "chart.h"
 #include "ui_chart.h"
+#include "buydialog.h"
 #include <QChart>
 #include <QChartView>
 #include <QDateTimeAxis>
@@ -11,52 +12,54 @@
 #include <qnetworkaccessmanager.h>
 #include <QJsonDocument>
 #include <QNetworkReply>
-#include <QBarSeries>
-#include <QBarCategoryAxis>
-#include <QBarSet>
+#include "../util/AppManager/appmanager.h"
 
-Chart::Chart(QWidget *parent)
+Chart::Chart(QWidget *parent, QString stockName)
     : QWidget(parent)
     , ui(new Ui::Chart)
 {
+
     ui->setupUi(this);
     setLayout(ui->layout_0);
 
-    ui->layout_0->setContentsMargins(50, 20, 50, 20);
+    QString url =
+        "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey=7512965b9438146d549e4f26c6966672ca138df8f6b9cbe8c32047e46c8f5a24&numOfRows=100&resultType=json&itmsNm="
+        +stockName;
+
+    connect(AppManager::instance().api(), &ApiManager::responseReceived,
+            this, [this](const QByteArray &response) {
+
+                QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                if (jsonDoc.isObject()) {
+                    QJsonObject responseObj = jsonDoc.object().value("response").toObject();
+                    ApiResponse api = ApiResponse::fromJson(responseObj);
+
+                    ui->label_title->setText(api.body.items[0].itmsNm);
+                    ui->label_price->setText(api.body.items[0].clpr);
+                    QString vs = api.body.items[0].vs;
+                    if(0 < vs.toInt()){
+                        ui->label_increment->setStyleSheet("color: #E20000;");
+                        ui->label_percentage->setStyleSheet("color: #E20000;");
+                        ui->label_percentage_symbol->setStyleSheet("color: #E20000;");
+                    } else {
+                        ui->label_increment->setStyleSheet("color: #1700E2;");
+                        ui->label_percentage->setStyleSheet("color: #1700E2;");
+                        ui->label_percentage_symbol->setStyleSheet("color: #1700E2;");
+                    }
+                    ui->label_increment->setText(api.body.items[0].vs);
+                    ui->label_percentage->setText(api.body.items[0].fltRt);
+                    ui->layout_0->addWidget(createPriceChart(api.body.numOfRows, api.body.items));
 
 
-    QNetworkAccessManager* manager = new QNetworkAccessManager();
+                    connect(ui->button_buy, &QPushButton::clicked, this, [=]() {
+                        on_button_trade_clicked(api.body.items);
+                    });
 
-    QString url = "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey=7512965b9438146d549e4f26c6966672ca138df8f6b9cbe8c32047e46c8f5a24&numOfRows=100&resultType=json&itmsNm=%ED%95%9C%ED%99%94%EB%B9%84%EC%A0%84";
-    QNetworkRequest request;
-    request.setUrl(QUrl(url));
+                    disconnect(AppManager::instance().api(), &ApiManager::responseReceived, this, nullptr);
+                }
+            });
 
-    QObject::connect(manager, &QNetworkAccessManager::finished,
-                     [=](QNetworkReply* reply) {
-                         if (reply->error()) {
-                             qDebug() << "Error:" << reply->errorString();
-                         } else {
-                             QByteArray response = reply->readAll();
-
-                             // JSON 파싱
-                             QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-                             if (jsonDoc.isObject()) {
-                                 QJsonObject obj = jsonDoc.object();
-                                 QJsonObject responseObj = obj["response"].toObject();
-
-                                 ApiResponse api = ApiResponse::fromJson(responseObj);
-                                 // qDebug() << api.body.numOfRows;
-
-                                 ui->layout_0->addWidget(createPriceChart(api.body.numOfRows, api.body.items));
-                             }
-                         }
-                         reply->deleteLater();
-                     }
-                     );
-
-    manager->get(request);
-
-
+    AppManager::instance().api()->get(QUrl(url));
 }
 
 QChartView* Chart::createPriceChart(int cnt, QList<StockItem> items){
@@ -72,7 +75,6 @@ QChartView* Chart::createPriceChart(int cnt, QList<StockItem> items){
     // Axis 스타일
     QDateTimeAxis *axisX = new QDateTimeAxis;
     axisX->setFormat("yyyy-MM-dd");
-
     if (!items.isEmpty()) {
         QDateTime first = QDateTime::fromString(items.first().basDt, "yyyyMMdd");
         QDateTime last = QDateTime::fromString(items.last().basDt, "yyyyMMdd");
@@ -99,8 +101,16 @@ QChartView* Chart::createPriceChart(int cnt, QList<StockItem> items){
     return chartView;
 }
 
+
+void Chart::on_button_trade_clicked(const QList<StockItem>& list)
+{
+    BuyDialog dlg(list);
+    dlg.exec();
+}
+
 Chart::~Chart()
 {
     delete ui;
 }
+
 

@@ -11,11 +11,8 @@ qt_standard_project_setup()
 qt_add_executable(project1
     WIN32 MACOSX_BUNDLE
     main.cpp
-    widget.cpp
-    widget.h
-    widget.ui
-    root.cpp
-    root.h
+    resource.qrc
+
     source/home/home.cpp
     source/home/home.h
     source/home/home.ui
@@ -29,7 +26,21 @@ qt_add_executable(project1
     source/chart/chart.h
     source/chart/chart.ui
     source/chart/chart_model.h
-    resource.qrc
+    source/util/AppManager/apimanager.cpp
+    source/util/AppManager/apimanager.h
+    source/util/AppManager/appmanager.cpp
+    source/util/AppManager/appmanager.h
+    source/util/AppManager/databasemanager.cpp
+    source/util/AppManager/databasemanager.h
+    source/chart/buydialog.h source/chart/buydialog.cpp source/chart/buydialog.ui
+    source/dashboard/dashboard.h source/dashboard/dashboard.cpp source/dashboard/dashboard.ui
+    source/dashboard/senddialog.h source/dashboard/senddialog.cpp source/dashboard/senddialog.ui
+    source/dashboard/depositdialog.h source/dashboard/depositdialog.cpp source/dashboard/depositdialog.ui
+
+    tab.h tab.cpp
+    root.h root.cpp root.ui
+
+
 )
 
 target_link_libraries(project1

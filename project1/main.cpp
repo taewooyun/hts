@@ -1,19 +1,16 @@
+#include "root.h"
 #include <QApplication>
+#include <QDir>
 #include <QSqlDatabase>
 #include <QSqlQuery>
-
-#include "root.h"
-#include "source/chart/chart.h"
+#include "./source/util/AppManager/appmanager.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    AppManager::instance().db()->connectDB();
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("E:/github/hts/project1/users.db");
-    db.open();
-
-    QSqlQuery query;
+    QSqlQuery query(AppManager::instance().db()->database());
     query.exec("CREATE TABLE IF NOT EXISTS users ("
                "name TEXT, "
                "acc TEXT, "
@@ -22,21 +19,9 @@ int main(int argc, char *argv[])
                "balance INTEGER DEFAULT 100000"
                ")");
 
-    // -----------------------------
-    // UI 생성
-    // -----------------------------
-    TabWidget *mainWindow = new TabWidget;
-    mainWindow->resize(1300, 700);
 
-    login *loginPage = new login;
-    signup *signupPage = new signup;
+    Root r;
+    r.show();
 
-    Home *homePage = new Home(loginPage, signupPage);  // 🔥 전달됨
-
-    mainWindow.addTab(new homePage, "Home");
-    mainWindow.addTab(new Chart(), "Chart");
-    wmainWindow.addTab(new QWidget, "DashBoard");
-
-    mainWindow->show();
     return a.exec();
 }

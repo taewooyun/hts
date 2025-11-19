@@ -54,9 +54,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="quitBtn">
         <property name="text">
-         <string>PushButton</string>
+         <string>종료</string>
         </property>
        </widget>
       </item>

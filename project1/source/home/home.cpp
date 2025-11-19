@@ -11,28 +11,17 @@ Home::Home(login *loginPage, signup *signupPage, QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->news_1->setOpenExternalLinks(true);
-    ui->news_1->setHtml(
-        "<div style='text-align:center;'>"
-        "<a href='https://n.news.naver.com/mnews/article/057/0001919433' "
-        "style='font-size:14px; text-decoration:none; color:#0066cc;'>"
-        "여기도 저기도 전기차…중국 차도 가세, 전기차 연간 20만 대 첫 돌파"
-        "</a>"
-        "</div>"
-        );
+    QString title = "여기도 저기도 전기차…중국 차도 가세, 전기차 연간 20만 대 첫 돌파";
+    QString discription = "여기도 저기도 전기차…중국 차도 가세, 전기차 연간 20만 대 첫 돌파전기차 연간 20만 대 첫 돌파전기차 연간 20만 대 첫 돌파전기차 연간 20만 대 첫 돌파전기차 연간 20만 대 첫 돌파";
+    QString date = "";
 
-    ui->news_2->setOpenExternalLinks(true);
-    ui->news_2->setHtml(
-        "<div style='text-align:center;'>"
-        "<a href='https://n.news.naver.com/mnews/article/014/0005435708' "
-        "style='font-size:14px; text-decoration:none; color:#0066cc;'>"
-        "외국인이 팔면 개인은 샀다… 롤러코스터 탄 반도체株"
-        "</a>"
-        "</div>"
-        );
+    // ui->news_title1;
+    // ui->news_description1;
+    // ui->date;
 
     balanceTimer = new QTimer(this);
     connect(balanceTimer, &QTimer::timeout, this, &Home::updateBalance);
+
 
     // 삭제 방지
     loginPage->setAttribute(Qt::WA_DeleteOnClose, false);
@@ -50,7 +39,7 @@ Home::~Home()
     delete ui;
 }
 
-// 🔥 로그인 버튼 눌렀을 때 실행될 부분
+//  로그인 버튼 눌렀을 때 실행될 부분
 void Home::on_btnLogin_clicked()
 {
     // 로그아웃 상태일 때만 로그인 창 띄우기

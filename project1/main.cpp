@@ -13,7 +13,6 @@ int main(int argc, char *argv[])
 
     QSqlQuery query(AppManager::instance().db()->database());
 
-
     query.prepare(
         "CREATE TABLE IF NOT EXISTS User ("
         "id TEXT PRIMARY KEY,"

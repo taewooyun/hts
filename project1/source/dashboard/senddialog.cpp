@@ -9,13 +9,13 @@ SendDialog::SendDialog(bankingdb *db, int userId, QWidget *parent)
     m_userId(userId)
 {
     ui->setupUi(this);
-    loadAccounts();
-
-    connect(ui->comboBox, &QComboBox::currentIndexChanged,
-            this, &SendDialog::updateBalanceDisplay);
 
     connect(ui->pushButton, &QPushButton::clicked,
             this, &SendDialog::onSendClicked);
+
+    // 내 잔액 표시
+    int balance = bankDB->getAccountBalance(m_userId);
+    ui->label_2->setText(QString("출금 가능 %1원").arg(balance));
 }
 
 SendDialog::~SendDialog()
@@ -23,35 +23,10 @@ SendDialog::~SendDialog()
     delete ui;
 }
 
-void SendDialog::loadAccounts()
-{
-    ui->comboBox->clear();
-
-    m_accList = bankDB->getUserAccounts(m_userId);
-
-    for (auto &acc : m_accList)
-        ui->comboBox->addItem(acc.accountNumber, acc.id);
-}
-
-void SendDialog::updateBalanceDisplay(int index)
-{
-    if (index < 0) return;
-
-    int accountId = ui->comboBox->itemData(index).toInt();
-    int balance = bankDB->getAccountBalance(accountId);
-
-    ui->label_2->setText(QString("출금 가능 %1원").arg(balance));
-}
-
 void SendDialog::onSendClicked()
 {
-    int idx = ui->comboBox->currentIndex();
-    if (idx < 0) {
-        QMessageBox::warning(this, "오류", "내 계좌를 선택하세요.");
-        return;
-    }
-
-    int fromId = ui->comboBox->itemData(idx).toInt();
+    // 출금 계좌 = 로그인한 사용자 계좌
+    int fromId = m_userId;
 
     QString toAccount = ui->textEdit->toPlainText();
     int toId = bankDB->getAccountIdByNumber(toAccount);

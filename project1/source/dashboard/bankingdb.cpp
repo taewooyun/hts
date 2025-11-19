@@ -33,14 +33,17 @@ QVector<AccountItem> bankingdb::getUserAccounts(int userId)
 
 int bankingdb::getAccountBalance(int userId)
 {
-    QSqlQuery q(db);
-    q.prepare("SELECT balance FROM User WHERE id = ?");
-    q.addBindValue(userId);
+    QSqlQuery query;
+    query.prepare("SELECT balance FROM User WHERE id=?");
+    query.addBindValue(userId);
+    query.exec();
 
-    if (q.exec() && q.next())
-        return q.value(0).toInt();
-
-    return -1;
+    if (query.next()) {
+        QVariant v = query.value(0);
+        if (v.isNull()) return 0;      // ← NULL 방지
+        return v.toInt();
+    }
+    return 0;
 }
 
 int bankingdb::getAccountIdByNumber(const QString &accNumber)

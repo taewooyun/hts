@@ -20,14 +20,10 @@ private slots:
     void onSendClicked();
 
 private:
-    void loadAccounts();
-    void updateBalanceDisplay(int index);
-
-private:
     Ui::SendDialog *ui;
     bankingdb *bankDB;
     int m_userId;
-    QVector<AccountItem> m_accList;
 };
+
 
 #endif // SENDDIALOG_H

@@ -14,9 +14,12 @@ DashBoard::DashBoard(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // 메인 DB를 bankingdb 에 전달
+    // 메인 DB 전달
     auto mainDB = AppManager::instance().db()->database();
     bankDB = new bankingdb(mainDB, this);
+
+    // 🔥 로그인한 사용자 ID 저장
+    m_userId = AppManager::instance().id.toInt();
 
     ui->list_banking->setColumnCount(5);
     ui->list_banking->setHorizontalHeaderLabels(

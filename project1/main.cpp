@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
                "acc TEXT, "
                "id TEXT PRIMARY KEY, "
                "pw TEXT, "
-               "balance INTEGER DEFAULT 100000"
+               "balance INTEGER DEFAULT 2000000"
                ")");
 
 

@@ -11,6 +11,8 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class Home; }
 QT_END_NAMESPACE
 
+
+
 class Home : public QWidget
 {
     Q_OBJECT
@@ -20,10 +22,8 @@ public:
 
     ~Home();
 
-    void setTitle(const QString &text);
-    void setTodayStock(int index, const QString &htmlText);
-    void setNews(int index, const QString &htmlText);
-    void setRtChart(int index, const QString &htmlText);
+
+
 
 private slots:
     void on_btnLogin_clicked();   // 🔥 로그인 버튼 슬롯 추가

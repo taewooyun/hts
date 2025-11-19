@@ -38,15 +38,17 @@ Root::Root(QWidget *parent)
     signup *signupPage = new signup;
     Home *homePage = new Home(loginPage, signupPage);
 
-    tabBar->addTab(homePage, "Home");
-    tabBar->addTab(new Chart(), "Chart");
-    tabBar->addTab(new DashBoard(), "DashBoard");
+    tabBar->addTab(homePage, "홈");
+    tabBar->addTab(new Chart(), "차트");
+    tabBar->addTab(new DashBoard(), "대시보드");
     tabBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     ui->verticalLayout->layout()->addWidget(tabBar);
     setLayout(ui->verticalLayout);
 
     tabBar->setCurrentIndex(2);
+
+    connect(ui->quitBtn, &QPushButton::clicked, this, &Root::close);
 }
 
 void Root::closeEvent(QCloseEvent *event)

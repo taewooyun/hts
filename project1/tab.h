@@ -1,54 +1,27 @@
 #ifndef TAB_H
 #define TAB_H
 
-#include <QStylePainter>
+#include <QTabWidget>
 #include <QTabBar>
-#include <qstyleoption.h>
+#include <QStylePainter>
+#include <QStyleOptionTab>
 
-class TabBar: public QTabBar{
+class TabBar : public QTabBar
+{
+    Q_OBJECT
 public:
-    QSize tabSizeHint(int index) const{
-        QSize s = QTabBar::tabSizeHint(index);
-        s.transpose();
-        s.rheight() += 100;
-        s.rwidth() += 100;
-        return s;
-    }
+    explicit TabBar(QWidget *parent = nullptr);
+    QSize tabSizeHint(int index) const override;
+
 protected:
-    void paintEvent(QPaintEvent * /*event*/){
-        QStylePainter painter(this);
-        QStyleOptionTab opt;
-
-
-        for(int i = 0;i < count();i++)
-        {
-            initStyleOption(&opt,i);
-            painter.drawControl(QStyle::CE_TabBarTabShape, opt);
-            painter.save();
-
-            QSize s = opt.rect.size();
-            s.transpose();
-            QRect r(QPoint(), s);
-            r.moveCenter(opt.rect.center());
-            opt.rect = r;
-
-            QPoint c = tabRect(i).center();
-            painter.translate(c);
-            painter.rotate(90);
-            painter.translate(-c);
-            painter.drawControl(QStyle::CE_TabBarTabLabel,opt);
-            painter.restore();
-        }
-    }
+    void paintEvent(QPaintEvent *event) override;
 };
 
 class TabWidget : public QTabWidget
 {
+    Q_OBJECT
 public:
-    TabWidget(QWidget *parent=0):QTabWidget(parent){
-        setTabBar(new TabBar);
-
-        setTabPosition(QTabWidget::West);
-    }
+    explicit TabWidget(QWidget *parent = nullptr);
 };
-#endif
+
+#endif // TAB_H

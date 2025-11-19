@@ -28,3 +28,7 @@ bool DatabaseManager::connectDB() {
 QSqlDatabase &DatabaseManager::database() {
     return m_db;
 }
+
+QString DatabaseManager::currentUserId() const {
+    return m_currentUserId;
+}

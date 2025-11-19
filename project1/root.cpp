@@ -40,7 +40,20 @@ Root::Root(QWidget *parent)
         chartPage->setKeyword(keyword);
     });
 
-    //ui connection
+    tabBar->setCurrentIndex(0);   // 처음에는 홈 페이지
+
+    // ------------------------------
+    // 3) 탭 이동 시 차트에 userId 갱신
+    // ------------------------------
+    connect(tabBar, &QTabWidget::currentChanged, this, [chartPage](int index) {
+        if (index == 1) {  // 차트 탭 index
+            chartPage->refreshUserId();
+        }
+    });
+
+    // ------------------------------
+    // 4) 종료 버튼
+    // ------------------------------
     connect(ui->quitBtn, &QPushButton::clicked, this, &Root::close);
 }
 
@@ -48,9 +61,9 @@ void Root::closeEvent(QCloseEvent *event)
 {
     QSqlDatabase::database().close();
     qDebug() << "Application is closing";
-
     event->accept();
 }
+
 Root::~Root()
 {
     delete ui;

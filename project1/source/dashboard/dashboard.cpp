@@ -1,5 +1,7 @@
+// dashboard.cpp
 #include "dashboard.h"
 #include "ui_dashboard.h"
+#include "senddialog.h"
 #include <QTableWidget>
 #include <qheaderview.h>
 #include <qsqlerror.h>
@@ -12,79 +14,142 @@ DashBoard::DashBoard(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // 메인 DB를 bankingdb 에 전달
+    auto mainDB = AppManager::instance().db()->database();
+    bankDB = new bankingdb(mainDB, this);
 
+    ui->list_banking->setColumnCount(5);
+    ui->list_banking->setHorizontalHeaderLabels(
+        {"User ID", "Type", "Target", "Amount", "Memo"});
 
-    // QSqlQuery qBank(AppManager::instance().db()->database());
-    // qBank.prepare("SELECT type, target, amount, memo FROM Banking WHERE userId = ?");
-    // qBank.addBindValue(AppManager::instance().id);
-    // qBank.exec();
+    connect(ui->btn_send, &QPushButton::clicked, this, &DashBoard::onSend);
 
-    // QTableWidget *table = new QTableWidget(0, 4, this);
-    // table->setHorizontalHeaderLabels({"종류", "계좌", "금액", "메모"});
-    // ui->layout_banking->addWidget(table);
-
-    // for (int i = 0; i < table->columnCount(); i++)
-    //     table->horizontalHeader()->setSectionResizeMode(i, QHeaderView::Stretch);
-    // table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    // table->horizontalHeader()->setSectionsMovable(false);
-    // table->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-
-    // if(query.next()){
-
-
-    //     for(int i=0; i<list.count(); ++i){
-    //         table->setItem(i, 0, new QTableWidgetItem(list[i].basDt));
-    //         table->setItem(i, 1, new QTableWidgetItem(list[i].clpr));
-    //         table->setItem(i, 2, new QTableWidgetItem(list[i].vs));
-    //         table->setItem(i, 3, new QTableWidgetItem(list[i].hipr));
-    //     }
-    // }
-
-
-    // query.value(0);
-
-}
-
-void DashBoard::showEvent(QShowEvent *event)
-{
-    QWidget::showEvent(event);
-    static bool initialized = false;
-    qDebug() << "call";
-
-    if (!initialized) {
-        initialized = true;
-
-        QSqlQuery qUser(AppManager::instance().db()->database());
-        qUser.prepare(
-            "SELECT id, name, acc, balance "
-            "FROM User "
-            "WHERE id = ?"
-            );
-        qUser.addBindValue(AppManager::instance().id);
-
-        if (!qUser.exec()) {
-            qDebug() << "Query Error:" << qUser.lastError().text();
-            return;
-        }
-
-        if (!qUser.next()) {
-            qDebug() << "No user found for id:" << AppManager::instance().id;
-            return;
-        }
-
-        qDebug() << "Current User ID =" << AppManager::instance().id;
-        qDebug() << "exec() =" << qUser.exec();
-        qDebug() << "next() =" << qUser.next();
-
-        QString id = qUser.value("id").toString();
-        ui->lbl_name->setText(qUser.value("name").toString());
-        ui->lbl_balance->setText(qUser.value("balance").toString());
-
-        qDebug() << qUser.value(0).toString();
-    }
 }
 
 DashBoard::~DashBoard()
 {
     delete ui;
 }
+
+/*--------------------------------------------------------
+    showEvent: 탭이 보일 때마다 사용자/내역 갱신
+--------------------------------------------------------*/
+void DashBoard::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    qDebug() << "[DashBoard] showEvent called";
+
+    // 사용자 정보 갱신
+    auto dbPtr = AppManager::instance().db();
+    if (!dbPtr) {
+        qDebug() << "[DashBoard] DB pointer is NULL";
+        return;
+    }
+    if (!dbPtr->database().isOpen()) {
+        qDebug() << "[DashBoard] DB is not open";
+        return;
+    }
+
+    // 사용자 정보 조회 (id가 비어있을 수도 있음)
+    QString currentId = AppManager::instance().id;
+    if (currentId.isEmpty()) {
+        qDebug() << "[DashBoard] No current user id";
+        ui->lbl_name->setText("비회원");
+        ui->lbl_balance->setText("-");
+    } else {
+        QSqlQuery qUser(dbPtr->database());
+        qUser.prepare("SELECT id, name, acc, balance FROM User WHERE id = ?");
+        qUser.addBindValue(currentId);
+
+        if (!qUser.exec()) {
+            qDebug() << "[DashBoard] qUser.exec() Error:" << qUser.lastError().text();
+            ui->lbl_name->setText("오류");
+            ui->lbl_balance->setText("-");
+        } else if (qUser.next()) {
+            ui->lbl_name->setText(qUser.value("name").toString());
+            ui->lbl_balance->setText(qUser.value("balance").toString());
+            qDebug() << "[DashBoard] Loaded user:" << qUser.value("name").toString()
+                     << "balance:" << qUser.value("balance").toString();
+        } else {
+            ui->lbl_name->setText("알수없음");
+            ui->lbl_balance->setText("-");
+            qDebug() << "[DashBoard] user not found for id" << currentId;
+        }
+    }
+
+    // 거래 내역(리스트) 갱신
+    loadBankingHistory();
+}
+
+/*--------------------------------------------------------
+    loadBankingHistory:
+    - UI에 QListWidget (ui->list_banking)이 있으면 사용.
+    - 없으면 fallback으로 QTableWidget을 만들거나 재사용.
+--------------------------------------------------------*/
+void DashBoard::loadBankingHistory()
+{
+    qDebug() << "[DashBoard] loadBankingHistory() called";
+
+    // 안전 체크: DB 포인터/연결 상태
+    auto dbPtr = AppManager::instance().db();
+    if (!dbPtr) {
+        qDebug() << "[DashBoard] DB pointer NULL";
+        return;
+    }
+    if (!dbPtr->database().isOpen()) {
+        qDebug() << "[DashBoard] DB not open";
+        return;
+    }
+
+    /* -------------- 여기에 debug 코드 넣기 ---------------- */
+    QSqlQuery debugQ(dbPtr->database());
+    debugQ.exec("SELECT COUNT(*) FROM banking");
+    if (debugQ.next()) {
+        qDebug() << "[Debug] banking total rows =" << debugQ.value(0).toInt();
+    }
+    /* ----------------------------------------------------- */
+
+
+    QString currentId = AppManager::instance().id;
+    if (currentId.isEmpty()) {
+        qDebug() << "[DashBoard] No login user";
+        ui->list_banking->setRowCount(0);
+        return;
+    }
+
+    // 테이블 초기화
+    ui->list_banking->setRowCount(0);
+
+    // DB 조회
+    QSqlQuery q(dbPtr->database());
+    q.prepare("SELECT userid, type, target, amount, memo FROM banking WHERE userid = ? ORDER BY ROWID DESC");
+    q.addBindValue(currentId);
+
+    if (!q.exec()) {
+        qDebug() << "[DashBoard] Query error :" << q.lastError().text();
+        return;
+    }
+
+    int row = 0;
+    while (q.next()) {
+        ui->list_banking->insertRow(row);
+
+        ui->list_banking->setItem(row, 0, new QTableWidgetItem(q.value("userid").toString()));
+        ui->list_banking->setItem(row, 1, new QTableWidgetItem(q.value("type").toString()));
+        ui->list_banking->setItem(row, 2, new QTableWidgetItem(q.value("target").toString()));
+        ui->list_banking->setItem(row, 3, new QTableWidgetItem(q.value("amount").toString()));
+        ui->list_banking->setItem(row, 4, new QTableWidgetItem(q.value("memo").toString()));
+
+        row++;
+    }
+
+    qDebug() << "[DashBoard] list_banking filled, rows =" << row;
+}
+
+void DashBoard::onSend()
+{
+    SendDialog dlg(bankDB, m_userId, this);
+    dlg.exec();
+}
+
+

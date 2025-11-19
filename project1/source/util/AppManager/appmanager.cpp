@@ -29,3 +29,11 @@ ApiManager *AppManager::api() const {
 QString AppManager::getConstant(const QString &key) const {
     return m_constants.value(key, "");
 }
+
+QString AppManager::userId() const {
+    return m_constants.value("id");
+}
+
+void AppManager::setUserId(const QString &id) {
+    m_constants["id"] = id;
+}

@@ -36,7 +36,7 @@ void signup::on_signup_btn_clicked() {
 
 
     QSqlQuery checkQuery;
-    checkQuery.prepare("SELECT id FROM users WHERE id=?");
+    checkQuery.prepare("SELECT id FROM User WHERE id=?");
     checkQuery.addBindValue(id);
     checkQuery.exec();
 
@@ -48,12 +48,11 @@ void signup::on_signup_btn_clicked() {
 
 
     QSqlQuery query;
-    query.prepare("INSERT INTO users (name, acc, id, pw) VALUES (?,?,?,?)");
-    query.addBindValue(name);
-    query.addBindValue(acc);
+    query.prepare("INSERT INTO User (id, pw, name, acc) VALUES (?,?,?,?)");
     query.addBindValue(id);
     query.addBindValue(pw);
-
+    query.addBindValue(name);
+    query.addBindValue(acc);
 
     if (query.exec()) {
         QMessageBox::information(this, "완료", "회원가입이 완료되었습니다!");

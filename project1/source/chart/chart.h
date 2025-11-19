@@ -2,6 +2,7 @@
 #define CHART_H
 
 #include "chart_model.h"
+#include <QTableWidget>
 #include <QWidget>
 #include <qchartview.h>
 
@@ -21,13 +22,13 @@ public:
 
 public slots:
 private slots:
-    void on_button_trade_clicked(const QList<StockItem> &list);
+    void on_button_detail_clicked(const QList<StockItem> &list);
 
 
 private:
     Ui::Chart *ui;
 
-    QChartView* createPriceChart(int cnt, QList<StockItem> items);
+    QChartView *createPriceChart(int cnt, QList<StockItem> items);
 };
 
 

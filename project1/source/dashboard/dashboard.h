@@ -15,6 +15,8 @@ public:
     explicit DashBoard(QWidget *parent = nullptr);
     ~DashBoard();
 
+public slots:
+    void showEvent(QShowEvent *event);
 private:
     Ui::DashBoard *ui;
 };

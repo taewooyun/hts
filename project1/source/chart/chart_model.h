@@ -9,7 +9,7 @@
 // 1. "item" 구조체
 struct StockItem {
     QString basDt;
-    QString srtnCd;
+    QString srnCd;
     QString isinCd;
     QString itmsNm;
     QString mrktCtg;
@@ -27,7 +27,7 @@ struct StockItem {
     static StockItem fromJson(const QJsonObject& json) {
         StockItem item;
         item.basDt = json["basDt"].toString();
-        item.srtnCd = json["srtnCd"].toString();
+        item.srnCd = json["srtnCd"].toString();
         item.isinCd = json["isinCd"].toString();
         item.itmsNm = json["itmsNm"].toString();
         item.mrktCtg = json["mrktCtg"].toString();

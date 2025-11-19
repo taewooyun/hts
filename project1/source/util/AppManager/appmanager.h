@@ -17,6 +17,7 @@ public:
     DatabaseManager *db() const;
     ApiManager *api() const;
     QString getConstant(const QString &key) const;
+    QString id;
 
 private:
     explicit AppManager(QObject *parent = nullptr);

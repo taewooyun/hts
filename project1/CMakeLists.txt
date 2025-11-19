@@ -32,13 +32,13 @@ qt_add_executable(project1
     source/util/AppManager/appmanager.h
     source/util/AppManager/databasemanager.cpp
     source/util/AppManager/databasemanager.h
-    source/chart/buydialog.h source/chart/buydialog.cpp source/chart/buydialog.ui
     source/dashboard/dashboard.h source/dashboard/dashboard.cpp source/dashboard/dashboard.ui
     source/dashboard/senddialog.h source/dashboard/senddialog.cpp source/dashboard/senddialog.ui
     source/dashboard/depositdialog.h source/dashboard/depositdialog.cpp source/dashboard/depositdialog.ui
 
     tab.h tab.cpp
     root.h root.cpp root.ui
+    source/chart/detaildialog.h source/chart/detaildialog.cpp source/chart/detaildialog.ui
 
 
 )

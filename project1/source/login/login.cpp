@@ -3,7 +3,7 @@
 #include <QSqlQuery>
 #include <QRegularExpressionValidator>
 #include <QKeyEvent>
-
+#include "../util/AppManager/appmanager.h"
 
 login::login(QWidget *parent) : QWidget(parent), ui(new Ui::login) {
     ui->setupUi(this);
@@ -38,14 +38,15 @@ void login::tryLogin() {
     }
 
     QSqlQuery query;
-    query.prepare("SELECT name, balance FROM users WHERE id=? AND pw=?");
+    query.prepare("SELECT name, balance, id FROM User WHERE id=? AND pw=?");
     query.addBindValue(id);
     query.addBindValue(pw);
     query.exec();
 
     if (query.next()) {
-        QString name = query.value(0).toString();  // ← DB에서 사용자 이름 가져오기
+        QString name = query.value("name").toString();  // ← DB에서 사용자 이름 가져오기
         int balance = query.value("balance").toInt();
+        AppManager::instance().id = query.value("id").toString();
 
         QMessageBox::information(this, "로그인 성공", "환영합니다!");
 

@@ -1,12 +1,13 @@
 #include "chart_model.h"
 #include "chart.h"
 #include "ui_chart.h"
-#include "buydialog.h"
+#include "detaildialog.h"
 #include <QChart>
 #include <QChartView>
 #include <QDateTimeAxis>
 #include <QLineSeries>
 #include <qjsonobject.h>
+#include <qtablewidget.h>
 #include <qvalueaxis.h>
 #include <QDateTime>
 #include <qnetworkaccessmanager.h>
@@ -46,13 +47,16 @@ Chart::Chart(QWidget *parent, QString stockName)
                         ui->label_percentage->setStyleSheet("color: #1700E2;");
                         ui->label_percentage_symbol->setStyleSheet("color: #1700E2;");
                     }
+
+                    ui->layout_0->setStretch(0,1);
+                    ui->layout_0->setStretch(1,5);
+
                     ui->label_increment->setText(api.body.items[0].vs);
                     ui->label_percentage->setText(api.body.items[0].fltRt);
                     ui->layout_0->addWidget(createPriceChart(api.body.numOfRows, api.body.items));
 
-
-                    connect(ui->button_buy, &QPushButton::clicked, this, [=]() {
-                        on_button_trade_clicked(api.body.items);
+                    connect(ui->button_detail, &QPushButton::clicked, this, [=]() {
+                        on_button_detail_clicked(api.body.items);
                     });
 
                     disconnect(AppManager::instance().api(), &ApiManager::responseReceived, this, nullptr);
@@ -60,7 +64,9 @@ Chart::Chart(QWidget *parent, QString stockName)
             });
 
     AppManager::instance().api()->get(QUrl(url));
+
 }
+
 
 QChartView* Chart::createPriceChart(int cnt, QList<StockItem> items){
     QLineSeries* series = new QLineSeries();
@@ -102,9 +108,9 @@ QChartView* Chart::createPriceChart(int cnt, QList<StockItem> items){
 }
 
 
-void Chart::on_button_trade_clicked(const QList<StockItem>& list)
+void Chart::on_button_detail_clicked(const QList<StockItem>& list)
 {
-    BuyDialog dlg(list);
+    DetailDialog dlg(list);
     dlg.exec();
 }
 

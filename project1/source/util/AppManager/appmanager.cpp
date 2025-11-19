@@ -10,8 +10,9 @@ AppManager::AppManager(QObject *parent) :
     QObject(parent),
     m_dbManager(new DatabaseManager),
     m_apiManager(new ApiManager),
-    m_constants({{"API_URL", "https://api.example.com"},
-                 {"APP_VERSION", "1.0.0"}})
+    m_constants({{"id", ""},
+
+                 })
 {
 }
 

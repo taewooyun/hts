@@ -63,16 +63,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btn_deposit">
-         <property name="text">
-          <string>입금</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="btn_send">
          <property name="text">
-          <string>출금</string>
+          <string>송금</string>
          </property>
         </widget>
        </item>
@@ -95,6 +88,9 @@
         <string>최근 거래 내역</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="list_banking"/>
      </item>
     </layout>
    </item>

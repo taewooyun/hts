@@ -5,6 +5,7 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Sql)
 find_package(Qt6 REQUIRED COMPONENTS Charts)
 find_package(Qt6 REQUIRED COMPONENTS Network)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 qt_standard_project_setup()
 
@@ -39,6 +40,7 @@ qt_add_executable(project1
     tab.h tab.cpp
     root.h root.cpp root.ui
     source/chart/detaildialog.h source/chart/detaildialog.cpp source/chart/detaildialog.ui
+    source/dashboard/bankingdb.h source/dashboard/bankingdb.cpp
 
 
 )
@@ -51,6 +53,7 @@ target_link_libraries(project1
 )
 target_link_libraries(project1 PRIVATE Qt6::Charts)
 target_link_libraries(project1 PRIVATE Qt6::Network)
+target_link_libraries(project1 PRIVATE Qt6::Core)
 
 include(GNUInstallDirs)
 

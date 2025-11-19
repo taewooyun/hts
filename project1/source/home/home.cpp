@@ -2,6 +2,7 @@
 #include "ui_home.h"
 #include <QMessageBox>
 #include "../login/login.h"     // 폴더 구조에 맞게 조정
+#include "../util/AppManager/appmanager.h"
 
 
 Home::Home(login *loginPage, signup *signupPage, QWidget *parent)
@@ -59,6 +60,7 @@ void Home::on_btnLogin_clicked()
 void Home::onLoginSuccess(const QString &name, int balance, QString id)
 {
     currentUserId = id;
+    AppManager::instance().db()->setCurrentUserId(id);
     ui->btnLogin->setText(QString("%1님\n로그아웃").arg(name));
     ui->btnLogin->setStyleSheet("text-align: center;");
     ui->btnLogin->setFixedSize(110, 50);

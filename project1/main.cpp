@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         "pw TEXT NOT NULL,"
         "name TEXT NOT NULL,"
         "acc TEXT NOT NULL,"
-        "balance INTEGER DEFAULT 0"
+        "balance INTEGER DEFAULT 1000000"
         ")"
         );
     if(!query.exec()){

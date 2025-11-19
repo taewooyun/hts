@@ -1,10 +1,10 @@
-#pragma once
 #ifndef HOME_H
 #define HOME_H
 
 #include <QWidget>
 #include <QTimer>
-#include "../login/login.h"     // 로그인 창 포함
+#include <QChartView>
+#include "../login/login.h"
 #include "../signup/signup.h"
 
 QT_BEGIN_NAMESPACE
@@ -21,14 +21,16 @@ public:
     explicit Home(login *loginPage, signup *signupPage, QWidget *parent = nullptr);
 
     ~Home();
-
-
-
+signals:
+    void logined();
+    void logout();
+    void search(QString);
 
 private slots:
-    void on_btnLogin_clicked();   // 🔥 로그인 버튼 슬롯 추가
+    void on_btnLogin_clicked();   // 로그인 버튼 슬롯 추가
     void onLoginSuccess(const QString &name, int balance, QString id);
-    void updateBalance();
+
+    void on_searchButton_clicked();
 
 private:
     Ui::Home *ui;

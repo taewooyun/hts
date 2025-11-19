@@ -40,7 +40,6 @@ qt_add_executable(project1
     root.h root.cpp root.ui
     source/chart/detaildialog.h source/chart/detaildialog.cpp source/chart/detaildialog.ui
 
-
 )
 
 target_link_libraries(project1

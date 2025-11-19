@@ -26,7 +26,6 @@ signals:
     void loginSuccess(const QString &name, int balance, QString id);
     void openSignup();
 
-
 private slots:
     void on_login_btn_clicked();
     void on_pwShow_btn_clicked();

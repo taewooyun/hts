@@ -19,8 +19,11 @@ class Chart : public QWidget
 public:
     Chart(QWidget *parent = nullptr, QString = "한화비전");
     ~Chart();
+    QString keyword;
 
+    void requestStock(QString keyword);
 public slots:
+    void setKeyword(const QString& keyword);
 private slots:
     void on_button_detail_clicked(const QList<StockItem> &list);
 

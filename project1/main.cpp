@@ -9,10 +9,24 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QApplication::setStyle("Fusion");
+
+    QPalette lightPalette;
+    lightPalette.setColor(QPalette::Window, QColor(240, 240, 240));
+    lightPalette.setColor(QPalette::WindowText, Qt::black);
+    lightPalette.setColor(QPalette::Base, Qt::white);
+    lightPalette.setColor(QPalette::AlternateBase, QColor(225, 225, 225));
+    lightPalette.setColor(QPalette::ToolTipBase, Qt::white);
+    lightPalette.setColor(QPalette::ToolTipText, Qt::black);
+    lightPalette.setColor(QPalette::Text, Qt::black);
+    lightPalette.setColor(QPalette::Button, QColor(240, 240, 240));
+    lightPalette.setColor(QPalette::ButtonText, Qt::black);
+    QApplication::setPalette(lightPalette);
+
+
     AppManager::instance().db()->connectDB();
 
     QSqlQuery query(AppManager::instance().db()->database());
-
     query.prepare(
         "CREATE TABLE IF NOT EXISTS User ("
         "id TEXT PRIMARY KEY,"

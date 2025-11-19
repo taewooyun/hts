@@ -50,7 +50,9 @@ void login::tryLogin() {
 
         QMessageBox::information(this, "로그인 성공", "환영합니다!");
 
+
         emit loginSuccess(name, balance, id);   // ← 이름을 함께 보냄
+
         this->hide();
     }
     else {

@@ -23,50 +23,8 @@ Chart::Chart(QWidget *parent, QString stockName)
     ui->setupUi(this);
     setLayout(ui->layout_0);
 
-    QString url =
-        "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey=7512965b9438146d549e4f26c6966672ca138df8f6b9cbe8c32047e46c8f5a24&numOfRows=100&resultType=json&itmsNm="
-        +stockName;
-
-    connect(AppManager::instance().api(), &ApiManager::responseReceived,
-            this, [this](const QByteArray &response) {
-
-                QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-                if (jsonDoc.isObject()) {
-                    QJsonObject responseObj = jsonDoc.object().value("response").toObject();
-                    ApiResponse api = ApiResponse::fromJson(responseObj);
-
-                    ui->label_title->setText(api.body.items[0].itmsNm);
-                    ui->label_price->setText(api.body.items[0].clpr);
-                    QString vs = api.body.items[0].vs;
-                    if(0 < vs.toInt()){
-                        ui->label_increment->setStyleSheet("color: #E20000;");
-                        ui->label_percentage->setStyleSheet("color: #E20000;");
-                        ui->label_percentage_symbol->setStyleSheet("color: #E20000;");
-                    } else {
-                        ui->label_increment->setStyleSheet("color: #1700E2;");
-                        ui->label_percentage->setStyleSheet("color: #1700E2;");
-                        ui->label_percentage_symbol->setStyleSheet("color: #1700E2;");
-                    }
-
-                    ui->layout_0->setStretch(0,1);
-                    ui->layout_0->setStretch(1,5);
-
-                    ui->label_increment->setText(api.body.items[0].vs);
-                    ui->label_percentage->setText(api.body.items[0].fltRt);
-                    ui->layout_0->addWidget(createPriceChart(api.body.numOfRows, api.body.items));
-
-                    connect(ui->button_detail, &QPushButton::clicked, this, [=]() {
-                        on_button_detail_clicked(api.body.items);
-                    });
-
-                    disconnect(AppManager::instance().api(), &ApiManager::responseReceived, this, nullptr);
-                }
-            });
-
-    AppManager::instance().api()->get(QUrl(url));
-
+    requestStock("한화비전");
 }
-
 
 QChartView* Chart::createPriceChart(int cnt, QList<StockItem> items){
     QLineSeries* series = new QLineSeries();
@@ -108,6 +66,52 @@ QChartView* Chart::createPriceChart(int cnt, QList<StockItem> items){
 }
 
 
+void Chart::requestStock(QString keyword){
+
+    QString url =
+        "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey=7512965b9438146d549e4f26c6966672ca138df8f6b9cbe8c32047e46c8f5a24&numOfRows=100&resultType=json&itmsNm="
+        +keyword;
+
+    connect(AppManager::instance().api(), &ApiManager::responseReceived,
+            this, [this](const QByteArray &response) {
+
+                QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
+                if (jsonDoc.isObject()) {
+                    QJsonObject responseObj = jsonDoc.object().value("response").toObject();
+                    ApiResponse api = ApiResponse::fromJson(responseObj);
+
+                    ui->label_title->setText(api.body.items[0].itmsNm);
+                    ui->label_price->setText(api.body.items[0].clpr);
+                    QString vs = api.body.items[0].vs;
+                    if(0 < vs.toInt()){
+                        ui->label_increment->setStyleSheet("color: #E20000;");
+                        ui->label_percentage->setStyleSheet("color: #E20000;");
+                        ui->label_percentage_symbol->setStyleSheet("color: #E20000;");
+                    } else {
+                        ui->label_increment->setStyleSheet("color: #1700E2;");
+                        ui->label_percentage->setStyleSheet("color: #1700E2;");
+                        ui->label_percentage_symbol->setStyleSheet("color: #1700E2;");
+                    }
+
+                    ui->label_increment->setText(api.body.items[0].vs);
+                    ui->label_percentage->setText(api.body.items[0].fltRt);
+                    ui->layout_0->addWidget(createPriceChart(api.body.numOfRows, api.body.items));
+
+                    connect(ui->button_detail, &QPushButton::clicked, this, [=]() {
+                        on_button_detail_clicked(api.body.items);
+                    });
+
+                    disconnect(AppManager::instance().api(), &ApiManager::responseReceived, this, nullptr);
+                }
+            });
+    AppManager::instance().api()->get(QUrl(url));
+
+}
+void Chart::setKeyword(const QString& keyword)
+{
+    requestStock(keyword);
+}
+
 void Chart::on_button_detail_clicked(const QList<StockItem>& list)
 {
     DetailDialog dlg(list);
@@ -118,5 +122,4 @@ Chart::~Chart()
 {
     delete ui;
 }
-
 

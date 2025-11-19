@@ -13,10 +13,12 @@ class ApiManager : public QObject
 public:
     explicit ApiManager(QObject *parent = nullptr);
     void get(const QUrl &url);
+    void get(const QNetworkRequest &request);
 
     // data
     QList<StockItem> stockList;
 
+    StockItem searchItem;
 signals:
     void responseReceived(const QByteArray &data);
 

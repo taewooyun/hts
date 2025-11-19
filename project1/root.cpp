@@ -6,7 +6,6 @@
 #include "tab.h"
 #include "ui_root.h"
 #include <QTabWidget>
-#include "./source/util/AppManager/appmanager.h"
 
 Root::Root(QWidget *parent)
     : QWidget(parent, Qt::FramelessWindowHint)
@@ -15,39 +14,33 @@ Root::Root(QWidget *parent)
     ui->setupUi(this);
     resize(1300, 700);
 
-    QString url =
-        "https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo?serviceKey=7512965b9438146d549e4f26c6966672ca138df8f6b9cbe8c32047e46c8f5a24&numOfRows=30&resultType=json"
-        ;
-    connect(AppManager::instance().api(), &ApiManager::responseReceived,
-            this, [this](const QByteArray &response) {
-                QJsonDocument jsonDoc = QJsonDocument::fromJson(response);
-                if (jsonDoc.isObject()) {
-                    QJsonObject responseObj = jsonDoc.object()["response"].toObject();
-                    ApiResponse api = ApiResponse::fromJson(responseObj);
-
-                    AppManager::instance().api()->stockList = api.body.items;
-                    disconnect(AppManager::instance().api(), &ApiManager::responseReceived, this, nullptr);
-                }
-            });
-
-    AppManager::instance().api()->get(QUrl(url));
-
     TabWidget *tabBar = new TabWidget;
-
     login *loginPage = new login;
     signup *signupPage = new signup;
     Home *homePage = new Home(loginPage, signupPage);
+    Chart *chartPage = new Chart();
 
     tabBar->addTab(homePage, "홈");
-    tabBar->addTab(new Chart(), "차트");
-    tabBar->addTab(new DashBoard(), "대시보드");
+    tabBar->addTab(chartPage, "차트");
+    tabBar->addTab(new DashBoard(), "로그인필요");
     tabBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
+    tabBar->setTabEnabled(2, false);
     ui->verticalLayout->layout()->addWidget(tabBar);
     setLayout(ui->verticalLayout);
+    connect(homePage, &Home::logined, this, [=](){
+        tabBar->setTabEnabled(2, true);
+        tabBar->setTabText(2, "대시보드");
+    });
+    connect(homePage, &Home::logout, this, [=](){
+        tabBar->setTabEnabled(2, false);
+        tabBar->setTabText(2, "로그인 필요");
+    });
+    connect(homePage, &Home::search, this, [=](const QString& keyword){
+        tabBar->setCurrentIndex(1);
+        chartPage->setKeyword(keyword);
+    });
 
-    tabBar->setCurrentIndex(2);
-
+    //ui connection
     connect(ui->quitBtn, &QPushButton::clicked, this, &Root::close);
 }
 
@@ -56,7 +49,7 @@ void Root::closeEvent(QCloseEvent *event)
     QSqlDatabase::database().close();
     qDebug() << "Application is closing";
 
-    event->accept();  // 또는 event->ignore()로 취소 가능
+    event->accept();
 }
 Root::~Root()
 {
